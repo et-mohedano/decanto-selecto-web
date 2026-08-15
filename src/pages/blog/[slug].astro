@@ -1,0 +1,29 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+
+export async function getStaticPaths() {
+  const entradas = await getCollection('blog', (entry) => !entry.data.proximamente);
+  return entradas.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  metaTitle={entry.data.metaTitle}
+  description={entry.data.description}
+  categoria={entry.data.categoria}
+  fechaPublicacion={entry.data.fechaPublicacion}
+  minutosLectura={entry.data.minutosLectura}
+  slug={entry.id}
+  imagenPortada={entry.data.imagenPortada}
+>
+  <Content />
+</ArticleLayout>

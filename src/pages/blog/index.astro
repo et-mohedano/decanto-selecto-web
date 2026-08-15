@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import ArticleCard from '../../components/blog/ArticleCard.astro';
+import { breadcrumbJsonLd } from '../../utils/seo';
+
+const entradas = (await getCollection('blog')).sort(
+  (a, b) => a.data.fechaPublicacion.valueOf() - b.data.fechaPublicacion.valueOf(),
+);
+
+const jsonLd = breadcrumbJsonLd([
+  { name: 'Inicio', url: '/' },
+  { name: 'Blog', url: '/blog' },
+]);
+---
+
+<BaseLayout
+  title="Blog de perfumes y decants en Pachuca | Decanto Selecto"
+  description="Guías para elegir tu perfume según la ocasión, el clima de Pachuca y tu presupuesto. Aprende sobre decants, concentraciones y fragancias originales."
+  jsonLd={jsonLd}
+>
+  <section class="px-4 py-14 md:px-6">
+    <div class="mx-auto max-w-6xl">
+      <SectionHeading as="h1" titulo="Blog" subtitulo="Guías honestas para elegir mejor, sin tecnicismos innecesarios." />
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          entradas.map((entry) => (
+            <ArticleCard
+              titulo={entry.data.title}
+              descripcion={entry.data.description}
+              slug={entry.id}
+              categoria={entry.data.categoria}
+              proximamente={entry.data.proximamente}
+              imagen={entry.data.imagenPortada}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

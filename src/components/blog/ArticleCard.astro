@@ -1,0 +1,44 @@
+---
+interface Props {
+  titulo: string;
+  descripcion?: string;
+  slug?: string;
+  categoria?: string;
+  proximamente?: boolean;
+  imagen?: string;
+}
+
+const { titulo, descripcion, slug, categoria, proximamente = false, imagen } = Astro.props;
+const Tag = proximamente ? 'div' : 'a';
+const href = proximamente ? undefined : `/blog/${slug}`;
+---
+
+<Tag
+  href={href}
+  class:list={[
+    'group flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white transition-shadow',
+    proximamente ? 'opacity-60' : 'hover:shadow-md',
+  ]}
+>
+  <div class="aspect-[16/10] w-full bg-ink-soft">
+    {imagen && !proximamente && <img src={imagen} alt="" loading="lazy" class="h-full w-full object-cover" />}
+  </div>
+  <div class="flex flex-1 flex-col p-5">
+    {categoria && <span class="text-xs font-semibold uppercase tracking-widest text-neutral-500">{categoria}</span>}
+    <h3 class="mt-2 font-display text-xl font-semibold text-ink">{titulo}</h3>
+    {descripcion && <p class="mt-2 line-clamp-3 text-sm text-neutral-500">{descripcion}</p>}
+    <div class="mt-auto pt-4">
+      {
+        proximamente ? (
+          <span class="inline-block rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-500">
+            Próximamente
+          </span>
+        ) : (
+          <span class="text-sm font-medium text-ink underline decoration-gold-deep underline-offset-2">
+            Leer artículo →
+          </span>
+        )
+      }
+    </div>
+  </div>
+</Tag>
