@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import { linkConsulta } from '../utils/whatsapp';
+import { localBusinessJsonLd, breadcrumbJsonLd } from '../utils/seo';
+
+const jsonLd = [
+  localBusinessJsonLd(),
+  breadcrumbJsonLd([
+    { name: 'Inicio', url: '/' },
+    { name: 'Contacto', url: '/contacto' },
+  ]),
+];
+---
+
+<BaseLayout
+  title="Contacto y pedidos por WhatsApp | Decanto Selecto"
+  description="Escríbenos por WhatsApp o Instagram para pedir tu decant. Entregamos en Pachuca de Soto, Hidalgo. Resolvemos tus dudas antes de que compres."
+  jsonLd={jsonLd}
+>
+  <section class="px-4 py-16 md:px-6">
+    <div class="mx-auto max-w-2xl text-center">
+      <h1 class="font-display text-4xl font-semibold text-ink md:text-5xl">Contacto</h1>
+      <p class="mt-4 text-neutral-500">
+        Todo nuestro proceso de pedido pasa por WhatsApp: ahí resolvemos dudas, confirmamos disponibilidad y
+        coordinamos la entrega.
+      </p>
+
+      <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <a
+          href={linkConsulta()}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rounded-lg border border-neutral-200 p-6 text-left transition-shadow hover:shadow-md"
+        >
+          <h2 class="font-display text-xl font-semibold text-ink">WhatsApp</h2>
+          <p class="mt-2 text-sm text-neutral-500">
+            Escríbenos directamente para pedir, preguntar por una fragancia o confirmar disponibilidad.
+          </p>
+          <span class="mt-4 inline-block text-sm font-medium text-ink underline decoration-gold-deep underline-offset-2">
+            Abrir WhatsApp →
+          </span>
+        </a>
+
+        <a
+          href="https://www.instagram.com/DecantoSelecto"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rounded-lg border border-neutral-200 p-6 text-left transition-shadow hover:shadow-md"
+        >
+          <h2 class="font-display text-xl font-semibold text-ink">Instagram</h2>
+          <p class="mt-2 text-sm text-neutral-500">
+            Síguenos en @DecantoSelecto para ver el catálogo, novedades y contenido sobre perfumes.
+          </p>
+          <span class="mt-4 inline-block text-sm font-medium text-ink underline decoration-gold-deep underline-offset-2">
+            @DecantoSelecto →
+          </span>
+        </a>
+      </div>
+
+      <div class="mt-10 rounded-lg bg-gold-wash p-6 text-left">
+        <h2 class="font-display text-xl font-semibold text-ink">Zona de entrega</h2>
+        <p class="mt-2 text-sm text-neutral-700">
+          Entregamos en Pachuca de Soto, Hidalgo. Coordinamos el punto y horario de entrega directamente por
+          WhatsApp una vez confirmado tu pedido.
+        </p>
+      </div>
+
+      <div class="mt-12">
+        <Button href={linkConsulta()} target="_blank" rel="noopener noreferrer">Escribir por WhatsApp →</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import { linkConsulta } from '../utils/whatsapp';
+---
+
+<BaseLayout
+  title="Página no encontrada | Decanto Selecto"
+  description="La página que buscas no existe o cambió de dirección. Encuentra tu fragancia en el catálogo de Decanto Selecto."
+  noIndex={true}
+>
+  <section class="flex min-h-[60vh] items-center justify-center bg-ink px-4 py-20 text-center">
+    <div class="mx-auto max-w-lg">
+      <span class="font-display text-6xl font-semibold text-gold">404</span>
+      <h1 class="mt-4 font-display text-3xl font-semibold text-bone">Esta página no existe</h1>
+      <p class="mt-4 text-neutral-300">
+        Puede que el enlace esté roto o que la página haya cambiado de dirección. Pero seguro tu fragancia sigue
+        en el catálogo.
+      </p>
+      <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+        <Button href="/catalogo" variant="gold">Ver catálogo</Button>
+        <Button href={linkConsulta()} target="_blank" rel="noopener noreferrer" variant="outline-light">
+          Escribir por WhatsApp
+        </Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
