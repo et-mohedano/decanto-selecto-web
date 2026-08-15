@@ -31,76 +31,87 @@ const precios = [
 ];
 ---
 
-<div class="space-y-5">
-  {
-    mostrarOcasion && (
-      <div data-filter-group="ocasion" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por ocasión">
-        {ocasiones.map((o) => {
-          const active = (ocasionInicial ?? '') === o.value;
-          return (
-            <button
-              type="button"
-              data-filter-value={o.value}
-              aria-pressed={active ? 'true' : 'false'}
-              class:list={[
-                'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
-                active ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
-              ]}
-            >
-              {o.label}
-            </button>
-          );
-        })}
-      </div>
-    )
-  }
-
-  <div data-filter-group="clima" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por clima">
-    {
-      climas.map((c, i) => (
-        <button
-          type="button"
-          data-filter-value={c.value}
-          aria-pressed={i === 0 ? 'true' : 'false'}
-          class:list={[
-            'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
-            i === 0 ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
-          ]}
-        >
-          {c.label}
-        </button>
-      ))
-    }
-  </div>
-
-  <div data-filter-group="precio" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por precio del decant de 10 ml">
-    {
-      precios.map((p, i) => (
-        <button
-          type="button"
-          data-filter-value={`${p.min}-${p.max}`}
-          data-min={p.min}
-          data-max={p.max}
-          aria-pressed={i === 0 ? 'true' : 'false'}
-          class:list={[
-            'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
-            i === 0 ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
-          ]}
-        >
-          {p.label}
-        </button>
-      ))
-    }
-  </div>
-
-  <div>
-    <label for="buscador-catalogo" class="sr-only">Buscar por nombre o marca</label>
+<div class="flex flex-col gap-8 mb-6">
+  <div class="w-full">
+    <label for="buscador-catalogo" class="mb-2 block text-sm font-semibold text-ink">Buscar por nombre o marca</label>
     <input
       id="buscador-catalogo"
       type="search"
-      placeholder="Nombre o marca…"
-      class="min-h-11 w-full max-w-sm rounded-md border border-neutral-300 px-4 py-2.5 text-sm text-ink placeholder:text-neutral-400 focus:border-gold-deep focus:outline-none"
+      placeholder="Ej. Ombré Leather, Prada..."
+      class="min-h-12 w-full rounded-md border border-neutral-300 px-4 py-3 text-base text-ink placeholder:text-neutral-400 focus:border-gold-deep focus:outline-none focus:ring-2 focus:ring-gold-deep/20 transition-all"
     />
+  </div>
+
+  <div class="flex flex-col gap-6 lg:flex-row lg:flex-wrap lg:items-start">
+    {
+      mostrarOcasion && (
+        <div class="flex flex-col gap-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Ocasión</span>
+          <div data-filter-group="ocasion" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por ocasión">
+            {ocasiones.map((o) => {
+              const active = (ocasionInicial ?? '') === o.value;
+              return (
+                <button
+                  type="button"
+                  data-filter-value={o.value}
+                  aria-pressed={active ? 'true' : 'false'}
+                  class:list={[
+                    'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                    active ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
+                  ]}
+                >
+                  {o.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )
+    }
+
+    <div class="flex flex-col gap-2">
+      <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Clima</span>
+      <div data-filter-group="clima" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por clima">
+        {
+          climas.map((c, i) => (
+            <button
+              type="button"
+              data-filter-value={c.value}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              class:list={[
+                'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                i === 0 ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
+              ]}
+            >
+              {c.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Precio (10 ml)</span>
+      <div data-filter-group="precio" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por precio del decant de 10 ml">
+        {
+          precios.map((p, i) => (
+            <button
+              type="button"
+              data-filter-value={`${p.min}-${p.max}`}
+              data-min={p.min}
+              data-max={p.max}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              class:list={[
+                'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                i === 0 ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
+              ]}
+            >
+              {p.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
   </div>
 </div>
 
