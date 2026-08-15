@@ -7,6 +7,7 @@ import TrustStrip from '../components/ui/TrustStrip.astro';
 import Button from '../components/ui/Button.astro';
 import ProductGrid from '../components/product/ProductGrid.astro';
 import ArticleCard from '../components/blog/ArticleCard.astro';
+import ScentTrail from '../components/ui/ScentTrail.astro';
 import logo from '../assets/logo.png';
 import { perfumes } from '../data/perfumes';
 import { localBusinessJsonLd } from '../utils/seo';
@@ -49,16 +50,29 @@ const jsonLd = localBusinessJsonLd();
   jsonLd={jsonLd}
 >
   <!-- Hero -->
-  <section class="relative overflow-hidden bg-ink px-4 py-20 text-center md:py-28">
+  <section class="relative overflow-hidden bg-ink px-4 py-24 text-center md:py-32" data-scent-host>
+    <ScentTrail />
     <div class="relative mx-auto max-w-2xl">
-      <Image src={logo} alt="Decanto Selecto" width={96} height={96} class="mx-auto h-24 w-24 rounded-full" />
-      <h1 class="mt-8 font-display text-4xl font-semibold text-bone md:text-6xl">
+      <Image
+        src={logo}
+        alt="Decanto Selecto"
+        width={96}
+        height={96}
+        class="animate-fade-in-up mx-auto h-24 w-24 rounded-full"
+      />
+      <h1
+        class="animate-fade-in-up mt-8 font-display text-4xl font-semibold text-bone md:text-6xl"
+        style="animation-delay: 0.1s"
+      >
         Microfragancias de perfumes originales en Pachuca
       </h1>
-      <p class="mx-auto mt-5 max-w-lg text-base text-neutral-300 md:text-lg">
+      <p
+        class="animate-fade-in-up mx-auto mt-5 max-w-lg text-base text-neutral-300 md:text-lg"
+        style="animation-delay: 0.2s"
+      >
         Decants de 5 y 10 ml, 100% originales, con entrega en Pachuca de Soto, Hidalgo.
       </p>
-      <div class="mt-8">
+      <div class="animate-fade-in-up mt-8" style="animation-delay: 0.3s">
         <Button href="/catalogo" variant="gold">Ver catálogo</Button>
       </div>
     </div>
@@ -81,7 +95,7 @@ const jsonLd = localBusinessJsonLd();
           categorias.map((cat) => (
             <a
               href={cat.href}
-              class="group flex flex-col justify-between rounded-lg bg-ink p-6 transition-colors hover:bg-ink-soft"
+              class="group flex flex-col justify-between rounded-lg bg-ink p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-ink-soft hover:shadow-lg"
             >
               <div>
                 <h3 class="font-display text-xl font-semibold text-bone">{cat.titulo}</h3>

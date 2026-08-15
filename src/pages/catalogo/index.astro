@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FilterBar from '../../components/product/FilterBar.astro';
 import ProductGrid from '../../components/product/ProductGrid.astro';
+import ScentTrail from '../../components/ui/ScentTrail.astro';
 import { linkConsulta } from '../../utils/whatsapp';
 import { perfumes } from '../../data/perfumes';
 import { breadcrumbJsonLd } from '../../utils/seo';
@@ -17,13 +18,18 @@ const jsonLd = breadcrumbJsonLd([
   description="Explora las microfragancias originales de Decanto Selecto. Filtra por ocasión, clima y precio, o busca por nombre y marca. Entrega en Pachuca."
   jsonLd={jsonLd}
 >
+  <section class="relative overflow-hidden bg-ink px-4 py-16 text-center md:px-6" data-scent-host>
+    <ScentTrail />
+    <div class="relative mx-auto max-w-2xl">
+      <h1 class="animate-fade-in-up font-display text-4xl font-semibold text-bone md:text-5xl">Catálogo</h1>
+      <p class="animate-fade-in-up mt-3 text-neutral-300" style="animation-delay: 0.1s">
+        {perfumes.length} microfragancias originales · 5 y 10 ml
+      </p>
+    </div>
+  </section>
+
   <section class="px-4 py-12 md:px-6">
     <div class="mx-auto max-w-6xl">
-      <header class="mb-8 text-center">
-        <h1 class="font-display text-4xl font-semibold text-ink md:text-5xl">Catálogo</h1>
-        <p class="mt-3 text-neutral-500">{perfumes.length} microfragancias originales · 5 y 10 ml</p>
-      </header>
-
       <div class="mb-10">
         <FilterBar />
       </div>

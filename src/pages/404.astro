@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/ui/Button.astro';
+import ScentTrail from '../components/ui/ScentTrail.astro';
 import { linkConsulta } from '../utils/whatsapp';
 ---
 
@@ -9,15 +10,24 @@ import { linkConsulta } from '../utils/whatsapp';
   description="La página que buscas no existe o cambió de dirección. Encuentra tu fragancia en el catálogo de Decanto Selecto."
   noIndex={true}
 >
-  <section class="flex min-h-[60vh] items-center justify-center bg-ink px-4 py-20 text-center">
-    <div class="mx-auto max-w-lg">
-      <span class="font-display text-6xl font-semibold text-gold">404</span>
-      <h1 class="mt-4 font-display text-3xl font-semibold text-bone">Esta página no existe</h1>
-      <p class="mt-4 text-neutral-300">
+  <section
+    class="relative flex min-h-[60vh] items-center justify-center overflow-hidden bg-ink px-4 py-20 text-center"
+    data-scent-host
+  >
+    <ScentTrail />
+    <div class="relative mx-auto max-w-lg">
+      <span class="animate-fade-in-up font-display text-6xl font-semibold text-gold">404</span>
+      <h1 class="animate-fade-in-up mt-4 font-display text-3xl font-semibold text-bone" style="animation-delay: 0.1s">
+        Esta página no existe
+      </h1>
+      <p class="animate-fade-in-up mt-4 text-neutral-300" style="animation-delay: 0.2s">
         Puede que el enlace esté roto o que la página haya cambiado de dirección. Pero seguro tu fragancia sigue
         en el catálogo.
       </p>
-      <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+      <div
+        class="animate-fade-in-up mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+        style="animation-delay: 0.3s"
+      >
         <Button href="/catalogo" variant="gold">Ver catálogo</Button>
         <Button href={linkConsulta()} target="_blank" rel="noopener noreferrer" variant="outline-light">
           Escribir por WhatsApp

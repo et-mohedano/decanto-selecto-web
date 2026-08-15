@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/ui/SectionHeading.astro';
 import Button from '../components/ui/Button.astro';
+import ScentTrail from '../components/ui/ScentTrail.astro';
 import { linkConsulta } from '../utils/whatsapp';
 import { faqJsonLd, breadcrumbJsonLd } from '../utils/seo';
 
@@ -42,10 +43,13 @@ const jsonLd = [
   description="Te explicamos paso a paso cómo hacemos cada decant a partir del frasco original: medición exacta, envasado nuevo y por qué la originalidad no se negocia."
   jsonLd={jsonLd}
 >
-  <section class="bg-ink px-4 py-16 text-center md:px-6">
-    <div class="mx-auto max-w-2xl">
-      <h1 class="font-display text-4xl font-semibold text-bone md:text-5xl">Qué es un decant</h1>
-      <p class="mt-4 text-neutral-300">
+  <section class="relative overflow-hidden bg-ink px-4 py-20 text-center md:px-6" data-scent-host>
+    <ScentTrail />
+    <div class="relative mx-auto max-w-2xl">
+      <h1 class="animate-fade-in-up font-display text-4xl font-semibold text-bone md:text-5xl">
+        Qué es un decant
+      </h1>
+      <p class="animate-fade-in-up mt-4 text-neutral-300" style="animation-delay: 0.1s">
         Una porción del perfume original, medida con precisión y envasada en un atomizador nuevo. Nada más.
       </p>
     </div>
