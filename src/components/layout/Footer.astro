@@ -1,0 +1,72 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../assets/logo.png';
+import { linkConsulta } from '../../utils/whatsapp';
+
+const year = new Date().getFullYear();
+
+const navItems = [
+  { href: '/catalogo', label: 'Catálogo' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/nosotros', label: 'Nosotros' },
+  { href: '/que-es-un-decant', label: 'Qué es un decant' },
+  { href: '/contacto', label: 'Contacto' },
+];
+---
+
+<footer class="bg-ink text-neutral-300">
+  <div class="mx-auto max-w-6xl px-4 py-14 md:px-6">
+    <div class="grid gap-10 md:grid-cols-3">
+      <div>
+        <Image src={logo} alt="Decanto Selecto" width={56} height={56} class="h-14 w-14 rounded-full" />
+        <p class="mt-4 max-w-xs text-sm leading-relaxed">
+          Microfragancias y decants de perfumes originales en 5 y 10 ml, en Pachuca de Soto, Hidalgo.
+        </p>
+      </div>
+
+      <nav aria-label="Navegación del pie de página">
+        <h2 class="font-display text-lg font-semibold text-bone">Explora</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          {
+            navItems.map((item) => (
+              <li>
+                <a href={item.href} class="hover:text-gold">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="font-display text-lg font-semibold text-bone">Contacto</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li>
+            <a href={linkConsulta()} target="_blank" rel="noopener noreferrer" class="hover:text-gold">
+              WhatsApp
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.instagram.com/DecantoSelecto"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-gold"
+            >
+              @DecantoSelecto
+            </a>
+          </li>
+          <li>Entrega en Pachuca de Soto, Hidalgo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 border-t border-ink-line pt-6 text-xs text-neutral-500">
+      <p>
+        &copy; {year} Decanto Selecto. Todos nuestros perfumes son originales — no somos distribuidores
+        autorizados de las marcas mencionadas; los nombres de marca se usan únicamente con fines descriptivos.
+      </p>
+    </div>
+  </div>
+</footer>

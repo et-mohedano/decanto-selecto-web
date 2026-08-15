@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../assets/logo.png';
+import { linkConsulta } from '../../utils/whatsapp';
+
+const navItems = [
+  { href: '/catalogo', label: 'Catálogo' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/nosotros', label: 'Nosotros' },
+  { href: '/contacto', label: 'Contacto' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-40 bg-ink">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
+    <a href="/" class="flex items-center gap-2" aria-label="Decanto Selecto — inicio">
+      <Image src={logo} alt="Decanto Selecto" width={40} height={40} class="h-10 w-10 rounded-full" />
+    </a>
+
+    <nav class="hidden items-center gap-8 md:flex" aria-label="Navegación principal">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'font-body text-sm font-medium tracking-wide transition-colors hover:text-gold',
+              currentPath.startsWith(item.href) ? 'text-gold' : 'text-bone',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="hidden md:block">
+      <a
+        href={linkConsulta()}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex min-h-11 items-center justify-center rounded-md bg-gold px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-gold-deep"
+      >
+        WhatsApp
+      </a>
+    </div>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      class="flex min-h-11 min-w-11 items-center justify-center text-bone md:hidden"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <nav id="mobile-menu" class="hidden gap-1 border-t border-ink-line bg-ink px-4 pb-4 md:hidden" aria-label="Navegación móvil">
+    {
+      navItems.map((item) => (
+        <a href={item.href} class="block min-h-11 rounded-md px-2 py-3 text-base font-medium text-bone hover:bg-ink-soft">
+          {item.label}
+        </a>
+      ))
+    }
+    <a
+      href={linkConsulta()}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-2 inline-flex min-h-11 items-center justify-center rounded-md bg-gold px-5 py-2.5 text-sm font-medium text-ink"
+    >
+      Escribir por WhatsApp
+    </a>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  toggle?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+    const expanded = !menu?.classList.contains('hidden');
+    toggle.setAttribute('aria-expanded', String(expanded));
+  });
+</script>
