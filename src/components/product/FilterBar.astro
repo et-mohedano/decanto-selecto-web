@@ -1,0 +1,195 @@
+---
+import type { Ocasion, Clima } from '../../data/perfumes';
+
+interface Props {
+  ocasionInicial?: Ocasion;
+  mostrarOcasion?: boolean;
+}
+
+const { ocasionInicial, mostrarOcasion = true } = Astro.props;
+
+const ocasiones: { value: Ocasion | ''; label: string }[] = [
+  { value: '', label: 'Todas' },
+  { value: 'oficina', label: 'Oficina' },
+  { value: 'citas', label: 'Citas' },
+  { value: 'amigos', label: 'Amigos' },
+  { value: 'diario', label: 'Diario' },
+];
+
+const climas: { value: Clima | ''; label: string }[] = [
+  { value: '', label: 'Todos' },
+  { value: 'calurosos', label: 'Cálido' },
+  { value: 'frescos', label: 'Fresco' },
+  { value: 'cualquiera', label: 'Cualquiera' },
+];
+
+const precios = [
+  { min: '', max: '', label: 'Todos' },
+  { min: '', max: '100', label: 'Hasta $100' },
+  { min: '100', max: '200', label: '$100–200' },
+  { min: '200', max: '', label: '$200+' },
+];
+---
+
+<div class="space-y-5">
+  {
+    mostrarOcasion && (
+      <div data-filter-group="ocasion" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por ocasión">
+        {ocasiones.map((o) => {
+          const active = (ocasionInicial ?? '') === o.value;
+          return (
+            <button
+              type="button"
+              data-filter-value={o.value}
+              aria-pressed={active ? 'true' : 'false'}
+              class:list={[
+                'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                active ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
+              ]}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    )
+  }
+
+  <div data-filter-group="clima" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por clima">
+    {
+      climas.map((c, i) => (
+        <button
+          type="button"
+          data-filter-value={c.value}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+          class:list={[
+            'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+            i === 0 ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
+          ]}
+        >
+          {c.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div data-filter-group="precio" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por precio del decant de 10 ml">
+    {
+      precios.map((p, i) => (
+        <button
+          type="button"
+          data-filter-value={`${p.min}-${p.max}`}
+          data-min={p.min}
+          data-max={p.max}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+          class:list={[
+            'min-h-11 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+            i === 0 ? 'bg-ink text-gold' : 'bg-neutral-100 text-ink-soft hover:bg-neutral-200',
+          ]}
+        >
+          {p.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div>
+    <label for="buscador-catalogo" class="sr-only">Buscar por nombre o marca</label>
+    <input
+      id="buscador-catalogo"
+      type="search"
+      placeholder="Nombre o marca…"
+      class="min-h-11 w-full max-w-sm rounded-md border border-neutral-300 px-4 py-2.5 text-sm text-ink placeholder:text-neutral-400 focus:border-gold-deep focus:outline-none"
+    />
+  </div>
+</div>
+
+<script>
+  import { linkConsulta } from '../../utils/whatsapp';
+
+  const state = {
+    ocasion: '',
+    clima: '',
+    precioMin: null as number | null,
+    precioMax: null as number | null,
+    texto: '',
+  };
+
+  function applyFilters() {
+    const cards = document.querySelectorAll('[data-product-card]');
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const ocasiones = (card.getAttribute('data-ocasiones') || '').split(',');
+      const clima = card.getAttribute('data-clima') || '';
+      const precio10 = Number(card.getAttribute('data-precio10') || '0');
+      const texto = card.getAttribute('data-texto') || '';
+
+      const matchOcasion = !state.ocasion || ocasiones.includes(state.ocasion);
+      const matchClima = !state.clima || clima === state.clima || clima === 'cualquiera';
+      const matchPrecioMin = state.precioMin === null || precio10 >= state.precioMin;
+      const matchPrecioMax = state.precioMax === null || precio10 <= state.precioMax;
+      const matchTexto = !state.texto || texto.includes(state.texto);
+
+      const visible = matchOcasion && matchClima && matchPrecioMin && matchPrecioMax && matchTexto;
+      card.classList.toggle('hidden', !visible);
+      if (visible) visibleCount++;
+    });
+
+    const contador = document.getElementById('resultado-contador');
+    if (contador) {
+      contador.textContent = `Mostrando ${visibleCount} ${visibleCount === 1 ? 'fragancia' : 'fragancias'}`;
+    }
+
+    const emptyState = document.getElementById('catalogo-vacio');
+    const emptyLink = document.getElementById('catalogo-vacio-whatsapp') as HTMLAnchorElement | null;
+    if (emptyState) emptyState.classList.toggle('hidden', visibleCount !== 0);
+    if (emptyLink && visibleCount === 0) {
+      const contexto = state.texto ? `la fragancia "${state.texto}"` : undefined;
+      emptyLink.href = linkConsulta(contexto);
+    }
+  }
+
+  document.querySelectorAll('[data-filter-group]').forEach((group) => {
+    const type = group.getAttribute('data-filter-group');
+    const buttons = Array.from(group.querySelectorAll('[data-filter-value]'));
+    const initialActive = group.querySelector('[aria-pressed="true"]') || buttons[0];
+
+    function setState(btn: Element) {
+      if (type === 'ocasion') state.ocasion = btn.getAttribute('data-filter-value') || '';
+      if (type === 'clima') state.clima = btn.getAttribute('data-filter-value') || '';
+      if (type === 'precio') {
+        const min = btn.getAttribute('data-min');
+        const max = btn.getAttribute('data-max');
+        state.precioMin = min ? Number(min) : null;
+        state.precioMax = max ? Number(max) : null;
+      }
+    }
+
+    if (initialActive) setState(initialActive);
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        buttons.forEach((b) => {
+          const active = b === btn;
+          b.setAttribute('aria-pressed', String(active));
+          b.classList.toggle('bg-ink', active);
+          b.classList.toggle('text-gold', active);
+          b.classList.toggle('bg-neutral-100', !active);
+          b.classList.toggle('text-ink-soft', !active);
+          b.classList.toggle('hover:bg-neutral-200', !active);
+        });
+        setState(btn);
+        applyFilters();
+      });
+    });
+  });
+
+  const buscador = document.getElementById('buscador-catalogo') as HTMLInputElement | null;
+  buscador?.addEventListener('input', () => {
+    state.texto = (buscador.value || '').trim().toLowerCase();
+    applyFilters();
+  });
+
+  applyFilters();
+</script>

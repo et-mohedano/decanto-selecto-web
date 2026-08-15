@@ -1,0 +1,15 @@
+---
+import type { Perfume } from '../../data/perfumes';
+import ProductCard from './ProductCard.astro';
+
+interface Props {
+  perfumes: Perfume[];
+  id?: string;
+}
+
+const { perfumes, id } = Astro.props;
+---
+
+<div id={id} class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {perfumes.map((perfume) => <ProductCard perfume={perfume} />)}
+</div>

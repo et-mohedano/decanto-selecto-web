@@ -1,0 +1,79 @@
+---
+import type { Perfume } from '../../data/perfumes';
+
+interface Props {
+  perfume: Perfume;
+}
+
+const { perfume } = Astro.props;
+const t5 = perfume.tamanos.find((t) => t.ml === 5)!;
+const t10 = perfume.tamanos.find((t) => t.ml === 10)!;
+---
+
+<div
+  data-size-selector
+  data-nombre={perfume.nombre}
+  data-marca={perfume.marca}
+  data-conc={perfume.concentracion}
+>
+  <div class="flex gap-3" role="radiogroup" aria-label="Elige el tamaño">
+    <button
+      type="button"
+      class="size-option min-h-11 flex-1 rounded-md border-2 border-gold bg-gold-wash px-4 py-3 text-center font-medium text-ink transition-colors"
+      data-ml="5"
+      data-precio={t5.precio}
+      aria-pressed="true"
+    >
+      5 ml — ${t5.precio}
+    </button>
+    <button
+      type="button"
+      class="size-option min-h-11 flex-1 rounded-md border-2 border-neutral-200 bg-white px-4 py-3 text-center font-medium text-ink transition-colors"
+      data-ml="10"
+      data-precio={t10.precio}
+      aria-pressed="false"
+    >
+      10 ml — ${t10.precio}
+    </button>
+  </div>
+
+  <a
+    data-whatsapp-cta
+    href="#"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-base font-semibold text-ink transition-colors hover:bg-gold-deep"
+  >
+    Pedir por WhatsApp →
+  </a>
+  <p class="mt-2 text-center text-xs text-neutral-500">Abre WhatsApp con el mensaje ya escrito.</p>
+</div>
+
+<script>
+  import { linkPedido } from '../../utils/whatsapp';
+
+  document.querySelectorAll('[data-size-selector]').forEach((root) => {
+    const nombre = root.getAttribute('data-nombre') || '';
+    const marca = root.getAttribute('data-marca') || '';
+    const conc = root.getAttribute('data-conc') || '';
+    const options = root.querySelectorAll('.size-option');
+    const cta = root.querySelector('[data-whatsapp-cta]');
+
+    function activate(button: Element) {
+      options.forEach((opt) => {
+        const active = opt === button;
+        opt.setAttribute('aria-pressed', String(active));
+        opt.classList.toggle('border-gold', active);
+        opt.classList.toggle('bg-gold-wash', active);
+        opt.classList.toggle('border-neutral-200', !active);
+        opt.classList.toggle('bg-white', !active);
+      });
+      const ml = Number(button.getAttribute('data-ml') || '10');
+      const precio = Number(button.getAttribute('data-precio') || '0');
+      if (cta) (cta as HTMLAnchorElement).href = linkPedido(nombre, marca, conc, ml, precio);
+    }
+
+    options.forEach((btn) => btn.addEventListener('click', () => activate(btn)));
+    if (options[0]) activate(options[0]);
+  });
+</script>
