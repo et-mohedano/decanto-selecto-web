@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/*
+  Sistema de diseño de Decanto Selecto.
+  Tailwind CSS v4 usa configuración por CSS (@theme) en vez de tailwind.config.mjs.
+  Los valores son los del Manual de Identidad — no modificar sin actualizar el manual.
+*/
+@theme {
+  --color-gold: #ffbd59;
+  --color-gold-deep: #e5a33f;
+  --color-gold-pale: #ffe0ab;
+  --color-gold-wash: #fff6e6;
+
+  --color-ink: #202020;
+  --color-ink-soft: #2e2e2e;
+  --color-ink-line: #3a3a3a;
+
+  --color-bone: #fafaf8;
+
+  --color-neutral-100: #f2f1ee;
+  --color-neutral-200: #e4e2dd;
+  --color-neutral-300: #c9c6bf;
+  --color-neutral-400: #9e9a93;
+  --color-neutral-500: #6e6a64;
+  --color-neutral-700: #4a4741;
+  --color-neutral-900: #1a1a1a;
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Jost", "Helvetica Neue", Arial, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background-color: var(--color-bone);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-weight: 300;
+    line-height: 1.65;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  /* Marcas de perfume en versalitas — regla no negociable del manual de identidad */
+  .marca-versalitas {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.08em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-deep);
+    outline-offset: 2px;
+  }
+}
+
+/*
+  Estilos del cuerpo de los artículos de blog (contenido Markdown renderizado).
+  Usa :where() para mantener especificidad cero, así cualquier clase de Tailwind
+  usada dentro del contenido (p.ej. en InlineProduct) puede sobreescribir sin conflicto.
+*/
+@layer components {
+  :where(.article-content) {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-neutral-700);
+  }
+  :where(.article-content) h2 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  :where(.article-content) h3 {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  :where(.article-content) p {
+    margin-bottom: 1.25rem;
+  }
+  :where(.article-content) ul,
+  :where(.article-content) ol {
+    margin: 0 0 1.25rem 1.25rem;
+    list-style: revert;
+  }
+  :where(.article-content) a {
+    /* El dorado no se usa como color de texto sobre fondo claro (falla contraste, ver manual de identidad) */
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-gold-deep);
+    text-underline-offset: 2px;
+  }
+  :where(.article-content) img {
+    border-radius: var(--radius-lg);
+    margin: 1.5rem 0;
+  }
+  :where(.article-content) strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+}
