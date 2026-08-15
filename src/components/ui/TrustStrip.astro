@@ -1,0 +1,37 @@
+---
+interface Item {
+  texto: string;
+}
+
+interface Props {
+  items?: Item[];
+  variant?: 'dark' | 'light';
+}
+
+const {
+  items = [
+    { texto: '100% originales' },
+    { texto: 'Entrega en Pachuca' },
+    { texto: 'Desde $30' },
+  ],
+  variant = 'light',
+} = Astro.props;
+---
+
+<ul
+  class:list={[
+    'flex flex-wrap items-center justify-center gap-x-8 gap-y-3',
+    variant === 'dark' ? 'text-bone' : 'text-ink-soft',
+  ]}
+>
+  {
+    items.map((item) => (
+      <li class="flex items-center gap-2 text-sm">
+        <span class="text-gold" aria-hidden="true">
+          ✓
+        </span>
+        <span>{item.texto}</span>
+      </li>
+    ))
+  }
+</ul>

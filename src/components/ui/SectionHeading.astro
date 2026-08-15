@@ -1,0 +1,36 @@
+---
+interface Props {
+  titulo: string;
+  subtitulo?: string;
+  align?: 'left' | 'center';
+  variant?: 'dark' | 'light';
+  as?: 'h1' | 'h2';
+}
+
+const { titulo, subtitulo, align = 'center', variant = 'light', as = 'h2' } = Astro.props;
+const Tag = as;
+---
+
+<div class:list={['mb-10', align === 'center' ? 'text-center' : 'text-left']}>
+  <Tag
+    class:list={[
+      'font-display text-3xl font-semibold md:text-4xl',
+      variant === 'dark' ? 'text-bone' : 'text-ink',
+    ]}
+  >
+    {titulo}
+  </Tag>
+  {
+    subtitulo && (
+      <p
+        class:list={[
+          'mt-3 text-base',
+          variant === 'dark' ? 'text-neutral-300' : 'text-neutral-500',
+          align === 'center' && 'mx-auto max-w-2xl',
+        ]}
+      >
+        {subtitulo}
+      </p>
+    )
+  }
+</div>
