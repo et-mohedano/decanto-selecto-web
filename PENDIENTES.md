@@ -17,7 +17,7 @@ Lista viva de todo lo que necesito que confirmes o me proporciones antes de publ
 
 ## Del sitio (pendiente conforme avance la construcción)
 
-5. **Número real de WhatsApp** — el código usa `52771XXXXXXX` como marcador de posición (ver `src/utils/whatsapp.ts` una vez creado). Debe reemplazarse antes de publicar.
+5. ~~**Número real de WhatsApp** — el código usa `52771XXXXXXX` como marcador de posición (ver `src/utils/whatsapp.ts` una vez creado). Debe reemplazarse antes de publicar.~~ (Actualizado a: 5217713963787)
 6. **Dirección o zona exacta de entrega en Pachuca** — el documento de arquitectura menciona "mapa embebido si hay punto de entrega fijo"; necesito la zona/colonia exacta o confirmar que la entrega es solo a domicilio sin punto fijo.
 7. **Logotipo en una sola versión** — `Decanto Selecto.png` es un cuadrado de 2160×2160 con fondo oscuro sólido ya incluido en la imagen (no es un archivo transparente ni hay una versión separada para fondo claro, aunque el manual de identidad menciona que debería existir). Lo estoy usando tal cual en header, footer y hero (todos sobre fondo oscuro). Si necesitas el logo sobre fondo claro (ej. en un PDF o documento con fondo blanco) vas a necesitar que te generen esa versión aparte — en el sitio no se usa ese caso porque el diseño está construido sobre la paleta 70% oscuro.
 8. **Criterio oficial de asignación de "ocasión"** — ni la arquitectura ni el manual de identidad definen reglas de qué hace que un perfume sea "de oficina" vs "de citas" vs "de amigos" vs "diario"; se está asignando con criterio editorial siguiendo el patrón de los productos que sí traían esa etiqueta en los catálogos PDF. Avísame si hay un criterio distinto que debería seguir.

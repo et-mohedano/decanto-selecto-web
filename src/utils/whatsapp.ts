@@ -1,5 +1,5 @@
 // PENDIENTE: pedir el número real de WhatsApp al cliente y reemplazar aquí antes de publicar.
-const TELEFONO = '52771XXXXXXX';
+const TELEFONO = '5217713963787';
 
 export function linkPedido(nombre: string, marca: string, conc: string, ml: number, precio: number): string {
   const texto = `Hola, me interesa el ${nombre} (${conc}) de ${marca} en ${ml} ml — $${precio}. ¿Está disponible?`;
