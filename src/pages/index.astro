@@ -1,0 +1,155 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import TrustStrip from '../components/ui/TrustStrip.astro';
+import Button from '../components/ui/Button.astro';
+import ProductGrid from '../components/product/ProductGrid.astro';
+import ArticleCard from '../components/blog/ArticleCard.astro';
+import logo from '../assets/logo.png';
+import { perfumes } from '../data/perfumes';
+import { localBusinessJsonLd } from '../utils/seo';
+
+const destacados = perfumes.filter((p) => p.destacado).slice(0, 6);
+
+const categorias = [
+  {
+    href: '/catalogo/para-la-oficina',
+    titulo: 'Para la oficina',
+    texto: 'Discretos y elegantes, para todo el día sin invadir el espacio de nadie.',
+  },
+  {
+    href: '/catalogo/para-citas',
+    titulo: 'Para citas y fiestas',
+    texto: 'Con más carácter, pensados para la noche y para dejar huella.',
+  },
+  {
+    href: '/catalogo/para-amigos',
+    titulo: 'Para salir con amigos',
+    texto: 'Versátiles, con la presencia justa para una salida entre amigos.',
+  },
+  {
+    href: '/catalogo/diario',
+    titulo: 'Diario y versátiles',
+    texto: 'Ligeros y fáciles de llevar, para usar todos los días sin pensarlo.',
+  },
+];
+
+const articulos = (await getCollection('blog', (entry) => !entry.data.proximamente))
+  .sort((a, b) => b.data.fechaPublicacion.valueOf() - a.data.fechaPublicacion.valueOf())
+  .slice(0, 3);
+
+const jsonLd = localBusinessJsonLd();
+---
+
+<BaseLayout
+  title="Decants de perfumes originales en Pachuca | Decanto Selecto"
+  description="Microfragancias y decants de perfumes 100% originales en 5 y 10 ml. Filtra por ocasión y pide por WhatsApp con entrega en Pachuca de Soto, Hidalgo."
+  jsonLd={jsonLd}
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-ink px-4 py-20 text-center md:py-28">
+    <div class="relative mx-auto max-w-2xl">
+      <Image src={logo} alt="Decanto Selecto" width={96} height={96} class="mx-auto h-24 w-24 rounded-full" />
+      <h1 class="mt-8 font-display text-4xl font-semibold text-bone md:text-6xl">
+        Microfragancias de perfumes originales en Pachuca
+      </h1>
+      <p class="mx-auto mt-5 max-w-lg text-base text-neutral-300 md:text-lg">
+        Decants de 5 y 10 ml, 100% originales, con entrega en Pachuca de Soto, Hidalgo.
+      </p>
+      <div class="mt-8">
+        <Button href="/catalogo" variant="gold">Ver catálogo</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Franja de confianza -->
+  <section class="border-b border-neutral-200 bg-white px-4 py-8">
+    <TrustStrip />
+  </section>
+
+  <!-- Elige por ocasión -->
+  <section class="bg-bone px-4 py-16 md:px-6">
+    <div class="mx-auto max-w-6xl">
+      <SectionHeading
+        titulo="Elige por ocasión"
+        subtitulo="La forma más rápida de encontrar tu fragancia: según lo que vas a hacer, no según el nombre que ya conoces."
+      />
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          categorias.map((cat) => (
+            <a
+              href={cat.href}
+              class="group flex flex-col justify-between rounded-lg bg-ink p-6 transition-colors hover:bg-ink-soft"
+            >
+              <div>
+                <h3 class="font-display text-xl font-semibold text-bone">{cat.titulo}</h3>
+                <p class="mt-2 text-sm text-neutral-300">{cat.texto}</p>
+              </div>
+              <span class="mt-6 text-sm font-medium text-gold group-hover:underline">Ver fragancias →</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Los más pedidos -->
+  <section class="bg-white px-4 py-16 md:px-6">
+    <div class="mx-auto max-w-6xl">
+      <SectionHeading titulo="Los más pedidos" subtitulo="Las fragancias que más se preguntan por WhatsApp." />
+      <ProductGrid perfumes={destacados} />
+      <div class="mt-10 text-center">
+        <Button href="/catalogo" variant="outline">Ver catálogo completo</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Qué es un decant -->
+  <section class="bg-gold-wash px-4 py-16 md:px-6">
+    <div class="mx-auto max-w-4xl">
+      <SectionHeading titulo="¿Qué es un decant?" subtitulo="Prueba el perfume original antes de invertir en la botella completa." />
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div class="rounded-lg bg-white p-6 text-center shadow-sm">
+          <span class="font-display text-3xl font-semibold text-ink">1</span>
+          <p class="mt-3 text-sm text-neutral-600">Partimos siempre del frasco original de la marca, nunca de una imitación.</p>
+        </div>
+        <div class="rounded-lg bg-white p-6 text-center shadow-sm">
+          <span class="font-display text-3xl font-semibold text-ink">2</span>
+          <p class="mt-3 text-sm text-neutral-600">Medimos la cantidad exacta que pediste: 5 o 10 ml, sin diluir ni mezclar.</p>
+        </div>
+        <div class="rounded-lg bg-white p-6 text-center shadow-sm">
+          <span class="font-display text-3xl font-semibold text-ink">3</span>
+          <p class="mt-3 text-sm text-neutral-600">Lo envasamos en un atomizador nuevo, listo para usarse desde el primer día.</p>
+        </div>
+      </div>
+      <div class="mt-10 text-center">
+        <Button href="/que-es-un-decant" variant="outline">Conoce el proceso completo →</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Del blog -->
+  {
+    articulos.length > 0 && (
+      <section class="bg-bone px-4 py-16 md:px-6">
+        <div class="mx-auto max-w-6xl">
+          <SectionHeading titulo="Del blog" subtitulo="Guías para elegir mejor, sin tecnicismos innecesarios." />
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {articulos.map((entry) => (
+              <ArticleCard
+                titulo={entry.data.title}
+                descripcion={entry.data.description}
+                slug={entry.id}
+                categoria={entry.data.categoria}
+                proximamente={entry.data.proximamente}
+                imagen={entry.data.imagenPortada}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>

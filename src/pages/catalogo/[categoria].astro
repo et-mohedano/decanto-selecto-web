@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/product/FilterBar.astro';
+import ProductGrid from '../../components/product/ProductGrid.astro';
+import { linkConsulta } from '../../utils/whatsapp';
+import { perfumes } from '../../data/perfumes';
+import { categorias as categoriasBase, type CategoriaInfo } from '../../data/categorias';
+import { breadcrumbJsonLd } from '../../utils/seo';
+
+interface Categoria extends CategoriaInfo {
+  subtitulo: string;
+  metaTitle: string;
+  metaDescription: string;
+}
+
+export function getStaticPaths() {
+  const copiaExtra: Record<string, Pick<Categoria, 'subtitulo' | 'metaTitle' | 'metaDescription'>> = {
+    'para-la-oficina': {
+      subtitulo: 'Discretos y elegantes: proyectan lo justo para notarse sin invadir el espacio de nadie.',
+      metaTitle: 'Perfumes para la oficina en Pachuca | Decanto Selecto',
+      metaDescription:
+        'Decants de perfumes originales recomendables para la oficina: discretos, elegantes y de buena duración. Pide por WhatsApp, entrega en Pachuca.',
+    },
+    'para-citas': {
+      subtitulo: 'Con más carácter y proyección: pensados para la noche y para dejar huella.',
+      metaTitle: 'Perfumes para citas y fiestas en Pachuca | Decanto Selecto',
+      metaDescription:
+        'Decants de perfumes originales con carácter para citas y fiestas nocturnas. Filtra por clima y precio, y pide directo por WhatsApp con entrega en Pachuca.',
+    },
+    'para-amigos': {
+      subtitulo: 'Versátiles, con la presencia justa para una salida entre amigos.',
+      metaTitle: 'Perfumes para salir con amigos en Pachuca | Decanto Selecto',
+      metaDescription:
+        'Decants de perfumes originales versátiles para salir con amigos, con buena presencia sin ser invasivos. Pide por WhatsApp, entrega en Pachuca.',
+    },
+    diario: {
+      subtitulo: 'Ligeros y fáciles de llevar, para usar todos los días sin pensarlo.',
+      metaTitle: 'Perfumes de uso diario en Pachuca | Decanto Selecto',
+      metaDescription:
+        'Decants de perfumes originales ligeros y versátiles para usar todos los días. Filtra por clima y precio y pide directo por WhatsApp con entrega en Pachuca.',
+    },
+  };
+
+  const categorias: Categoria[] = categoriasBase.map((c) => ({ ...c, ...copiaExtra[c.slug] }));
+  return categorias.map((c) => ({ params: { categoria: c.slug }, props: { categoria: c } }));
+}
+
+interface Props {
+  categoria: Categoria;
+}
+
+const { categoria } = Astro.props;
+const perfumesFiltrados = perfumes.filter((p) => p.ocasiones.includes(categoria.ocasion));
+
+const jsonLd = breadcrumbJsonLd([
+  { name: 'Inicio', url: '/' },
+  { name: 'Catálogo', url: '/catalogo' },
+  { name: categoria.titulo, url: `/catalogo/${categoria.slug}` },
+]);
+---
+
+<BaseLayout title={categoria.metaTitle} description={categoria.metaDescription} jsonLd={jsonLd}>
+  <section class="px-4 py-12 md:px-6">
+    <div class="mx-auto max-w-6xl">
+      <nav aria-label="Ruta de navegación" class="mb-6 text-sm text-neutral-500">
+        <a href="/" class="hover:text-ink hover:underline">Inicio</a> ›
+        <a href="/catalogo" class="hover:text-ink hover:underline">Catálogo</a> ›
+        <span class="text-ink">{categoria.titulo}</span>
+      </nav>
+
+      <header class="mb-8 text-center">
+        <h1 class="font-display text-4xl font-semibold text-ink md:text-5xl">{categoria.titulo}</h1>
+        <p class="mx-auto mt-3 max-w-xl text-neutral-500">{categoria.subtitulo}</p>
+      </header>
+
+      <div class="mb-10">
+        <FilterBar mostrarOcasion={false} />
+      </div>
+
+      <p id="resultado-contador" class="mb-6 text-sm font-medium text-neutral-500" aria-live="polite">
+        Mostrando {perfumesFiltrados.length} fragancias
+      </p>
+
+      <ProductGrid perfumes={perfumesFiltrados} id="catalogo-grid" />
+
+      <div id="catalogo-vacio" class="hidden rounded-lg border border-neutral-200 bg-white p-10 text-center">
+        <p class="text-lg font-medium text-ink">No encontramos una fragancia con esos filtros.</p>
+        <p class="mt-2 text-neutral-500">Escríbenos y con gusto te decimos si la tenemos o la conseguimos.</p>
+        <a
+          id="catalogo-vacio-whatsapp"
+          href={linkConsulta()}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-5 inline-flex min-h-11 items-center justify-center rounded-md bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-deep"
+        >
+          Preguntar por WhatsApp
+        </a>
+      </div>
+
+      <div class="mt-10 text-center">
+        <a href="/catalogo" class="text-sm font-medium text-ink underline decoration-gold-deep underline-offset-2">
+          Ver el catálogo completo →
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

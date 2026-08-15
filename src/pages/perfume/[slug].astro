@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Badge from '../../components/ui/Badge.astro';
+import TrustStrip from '../../components/ui/TrustStrip.astro';
+import ProductGrid from '../../components/product/ProductGrid.astro';
+import SizeSelector from '../../components/product/SizeSelector.astro';
+import { perfumes } from '../../data/perfumes';
+import { categoriaDeOcasion } from '../../data/categorias';
+import { buildProductTitle, buildProductDescription, productJsonLd, breadcrumbJsonLd } from '../../utils/seo';
+import { optimizedProductImage } from '../../utils/images';
+
+export function getStaticPaths() {
+  return perfumes.map((perfume) => ({ params: { slug: perfume.slug }, props: { perfume } }));
+}
+
+interface Props {
+  perfume: (typeof perfumes)[number];
+}
+
+const { perfume } = Astro.props;
+const t5 = perfume.tamanos.find((t) => t.ml === 5)!;
+const t10 = perfume.tamanos.find((t) => t.ml === 10)!;
+
+const categoriaPrincipal = categoriaDeOcasion(perfume.ocasiones[0]);
+const imagen = await optimizedProductImage(perfume.imagen, 640);
+
+const similares = (() => {
+  const compartenOcasion = perfumes.filter(
+    (p) => p.slug !== perfume.slug && p.ocasiones.some((o) => perfume.ocasiones.includes(o)),
+  );
+  if (compartenOcasion.length >= 3) return compartenOcasion.slice(0, 3);
+  const yaElegidos = new Set(compartenOcasion.map((p) => p.slug));
+  const relleno = perfumes.filter((p) => p.slug !== perfume.slug && !yaElegidos.has(p.slug));
+  return [...compartenOcasion, ...relleno].slice(0, 3);
+})();
+
+const ocasionLabels: Record<string, string> = {
+  oficina: 'Oficina',
+  citas: 'Citas',
+  amigos: 'Amigos',
+  diario: 'Diario',
+};
+const climaLabels: Record<string, string> = {
+  calurosos: 'Climas calurosos',
+  frescos: 'Climas frescos',
+  cualquiera: 'Cualquier clima',
+};
+
+const title = buildProductTitle(perfume.nombre, perfume.marca);
+const description = buildProductDescription(perfume.nombre, perfume.marca, perfume.descripcionCorta, t5.precio);
+
+const jsonLd = [
+  productJsonLd({
+    nombre: perfume.nombre,
+    marca: perfume.marca,
+    descripcion: `${perfume.descripcionCorta}. Microfragancia de 10 ml de perfume original.`,
+    precio: t10.precio,
+    ml: 10,
+  }),
+  breadcrumbJsonLd([
+    { name: 'Inicio', url: '/' },
+    { name: 'Catálogo', url: '/catalogo' },
+    { name: categoriaPrincipal.titulo, url: `/catalogo/${categoriaPrincipal.slug}` },
+    { name: perfume.nombre, url: `/perfume/${perfume.slug}` },
+  ]),
+];
+---
+
+<BaseLayout title={title} description={description} ogImage={imagen.src} jsonLd={jsonLd}>
+  <section class="px-4 py-10 md:px-6">
+    <div class="mx-auto max-w-5xl">
+      <nav aria-label="Ruta de navegación" class="mb-8 text-sm text-neutral-500">
+        <a href="/" class="hover:text-ink hover:underline">Inicio</a> ›
+        <a href="/catalogo" class="hover:text-ink hover:underline">Catálogo</a> ›
+        <a href={`/catalogo/${categoriaPrincipal.slug}`} class="hover:text-ink hover:underline">{categoriaPrincipal.titulo}</a> ›
+        <span class="text-ink">{perfume.nombre}</span>
+      </nav>
+
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-2">
+        <div class="flex justify-center md:justify-start">
+          <span class="flex h-72 w-72 items-center justify-center overflow-hidden rounded-full border-4 border-gold bg-neutral-100 md:h-80 md:w-80">
+            <img
+              src={imagen.src}
+              alt={`Frasco de ${perfume.nombre} de ${perfume.marca} junto a decant de Decanto Selecto`}
+              width="320"
+              height="320"
+              loading="eager"
+              class="h-full w-full object-cover"
+            />
+          </span>
+        </div>
+
+        <div>
+          <span class="marca-versalitas text-sm text-neutral-500">{perfume.marca}</span>
+          <h1 class="mt-1 font-display text-4xl font-semibold text-ink md:text-5xl">
+            {perfume.nombre} <span class="text-2xl text-neutral-400 md:text-3xl">{perfume.concentracion}</span>
+          </h1>
+          <p class="mt-3 text-lg text-neutral-600">{perfume.descripcionCorta}</p>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            {perfume.ocasiones.map((o) => (
+              <Badge variant="outline">{ocasionLabels[o]}</Badge>
+            ))}
+            <Badge variant="outline">{climaLabels[perfume.clima]}</Badge>
+          </div>
+
+          <div class="mt-6">
+            <SizeSelector perfume={perfume} />
+          </div>
+
+          <div class="mt-6 border-t border-neutral-200 pt-6">
+            <TrustStrip
+              items={[
+                { texto: '100% original' },
+                { texto: 'Decantado a mano' },
+                { texto: 'Entrega en Pachuca' },
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="mx-auto mt-14 max-w-3xl">
+        <h2 class="font-display text-2xl font-semibold text-ink">Cómo huele, cuándo usarlo y qué incluye tu decant</h2>
+        <p class="mt-4 text-neutral-700 leading-relaxed">{perfume.descripcionLarga}</p>
+      </div>
+
+      <div class="mt-16">
+        <h2 class="mb-6 text-center font-display text-2xl font-semibold text-ink">Fragancias similares</h2>
+        <ProductGrid perfumes={similares} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
