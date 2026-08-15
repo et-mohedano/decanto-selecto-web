@@ -1,0 +1,214 @@
+---
+// Fondo decorativo interactivo para secciones "hero": partículas doradas
+// flotantes (evocan la estela de un perfume, ver manual de identidad) que
+// reaccionan al paso del mouse. El elemento padre debe tener
+// `data-scent-host` y `class="relative"` para que el canvas se ancle a él.
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div class:list={['pointer-events-none absolute inset-0 overflow-hidden', className]} data-scent-trail aria-hidden="true">
+  <canvas></canvas>
+</div>
+
+<script>
+  function initScentTrail(root: Element) {
+    const canvas = root.querySelector('canvas');
+    const host = root.closest('[data-scent-host]');
+    if (!canvas || !host) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const colors = ['255, 189, 89', '229, 163, 63', '255, 224, 171'];
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    let width = 0;
+    let height = 0;
+    let ambient: Array<{
+      x: number;
+      y: number;
+      r: number;
+      alpha: number;
+      driftX: number;
+      speed: number;
+      sway: number;
+      color: string;
+    }> = [];
+    let sparks: Array<{
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      r: number;
+      life: number;
+      maxLife: number;
+      color: string;
+    }> = [];
+    let mouseX = -1000;
+    let mouseY = -1000;
+    let lastSpawn = 0;
+    let lastTime = performance.now();
+
+    function resize() {
+      const rect = host!.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      canvas!.width = width * dpr;
+      canvas!.height = height * dpr;
+      canvas!.style.width = `${width}px`;
+      canvas!.style.height = `${height}px`;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function makeAmbient() {
+      return {
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: 0.8 + Math.random() * 2.2,
+        alpha: 0.08 + Math.random() * 0.22,
+        driftX: (Math.random() - 0.5) * 0.15,
+        speed: 0.12 + Math.random() * 0.18,
+        sway: Math.random() * Math.PI * 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      };
+    }
+
+    function seedAmbient() {
+      const count = Math.max(16, Math.min(46, Math.round((width * height) / 18000)));
+      ambient = Array.from({ length: count }, makeAmbient);
+    }
+
+    function spawnSpark(x: number, y: number) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 0.15 + Math.random() * 0.4;
+      sparks.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 0.15,
+        r: 1 + Math.random() * 2.2,
+        life: 0,
+        maxLife: 700 + Math.random() * 500,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      });
+      if (sparks.length > 140) sparks.shift();
+    }
+
+    function onMouseMove(e: MouseEvent) {
+      const rect = host!.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+      const now = performance.now();
+      if (now - lastSpawn > 28 && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+        lastSpawn = now;
+        spawnSpark(mouseX + (Math.random() - 0.5) * 6, mouseY + (Math.random() - 0.5) * 6);
+      }
+    }
+
+    function onMouseLeave() {
+      mouseX = -1000;
+      mouseY = -1000;
+    }
+
+    function drawAmbient(dt: number) {
+      for (const p of ambient) {
+        p.sway += 0.004 * dt;
+        p.y -= p.speed * (dt / 16);
+        p.x += p.driftX * (dt / 16) + Math.sin(p.sway) * 0.05;
+        if (p.y < -10) {
+          p.y = height + 10;
+          p.x = Math.random() * width;
+        }
+
+        let alpha = p.alpha;
+        let r = p.r;
+        if (mouseX > -500) {
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const influence = Math.max(0, 1 - dist / 140);
+          if (influence > 0) {
+            alpha = Math.min(0.65, alpha + influence * 0.5);
+            r = p.r + influence * 1.5;
+            p.x += (dx / (dist || 1)) * influence * 0.6;
+            p.y += (dy / (dist || 1)) * influence * 0.6;
+          }
+        }
+
+        ctx!.beginPath();
+        ctx!.fillStyle = `rgba(${p.color}, ${alpha})`;
+        ctx!.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+    }
+
+    function drawSparks(dt: number) {
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        s.life += dt;
+        if (s.life >= s.maxLife) {
+          sparks.splice(i, 1);
+          continue;
+        }
+        s.x += s.vx * (dt / 16);
+        s.y += s.vy * (dt / 16);
+        const t = s.life / s.maxLife;
+        const alpha = (1 - t) * 0.55;
+        const r = s.r * (1 + t * 0.8);
+        ctx!.beginPath();
+        ctx!.fillStyle = `rgba(${s.color}, ${alpha})`;
+        ctx!.shadowColor = `rgba(${s.color}, ${alpha})`;
+        ctx!.shadowBlur = 6;
+        ctx!.arc(s.x, s.y, r, 0, Math.PI * 2);
+        ctx!.fill();
+        ctx!.shadowBlur = 0;
+      }
+    }
+
+    function frame(now: number) {
+      const dt = Math.min(48, now - lastTime);
+      lastTime = now;
+
+      if (!document.hidden) {
+        ctx!.clearRect(0, 0, width, height);
+        drawAmbient(dt);
+        drawSparks(dt);
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    resize();
+    seedAmbient();
+
+    const onResize = () => {
+      resize();
+      seedAmbient();
+    };
+
+    window.addEventListener('resize', onResize);
+    host.addEventListener('mousemove', onMouseMove as EventListener);
+    host.addEventListener('mouseleave', onMouseLeave);
+
+    if (reduceMotion) {
+      // Sin animación ni rastro de mouse: solo una composición estática de fondo.
+      ctx.clearRect(0, 0, width, height);
+      for (const p of ambient) {
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return;
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  document.querySelectorAll('[data-scent-trail]').forEach(initScentTrail);
+</script>

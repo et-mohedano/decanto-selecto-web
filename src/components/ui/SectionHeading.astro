@@ -11,7 +11,7 @@ const { titulo, subtitulo, align = 'center', variant = 'light', as = 'h2' } = As
 const Tag = as;
 ---
 
-<div class:list={['mb-10', align === 'center' ? 'text-center' : 'text-left']}>
+<div class:list={['mb-10', align === 'center' ? 'text-center' : 'text-left']} data-reveal={as === 'h1' ? undefined : true}>
   <Tag
     class:list={[
       'font-display text-3xl font-semibold md:text-4xl',
