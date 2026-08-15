@@ -1,0 +1,9 @@
+{
+  // Sitio 100% estático (Astro con output: 'static'): no hay Worker script,
+  // solo se sirven los archivos generados en dist/ como static assets.
+  "name": "decanto-selecto-web",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
