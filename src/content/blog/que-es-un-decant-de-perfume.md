@@ -5,6 +5,7 @@ keyword: "qué es un decant de perfume"
 categoria: "Educación"
 fechaPublicacion: 2026-09-01
 minutosLectura: 7
+imagenPortada: "/images/blog/que-es-un-decant-de-perfume.webp"
 proximamente: false
 ---
 
