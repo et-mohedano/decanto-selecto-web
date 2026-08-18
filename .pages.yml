@@ -16,6 +16,8 @@ content:
     type: collection
     path: src/content/blog
     format: yaml-frontmatter
+    filename:
+      template: "{primary}.mdx"
     view:
       primary: title
       fields: [title, categoria, proximamente, fechaPublicacion]
@@ -72,7 +74,7 @@ content:
     path: src/content/perfumes
     format: yaml-frontmatter
     filename:
-      template: "{fields.nombre}-{fields.concentracion}-{fields.marca}"
+      template: "{fields.nombre}-{fields.concentracion}-{fields.marca}.md"
     view:
       primary: nombre
       fields: [nombre, marca, concentracion, destacado]
