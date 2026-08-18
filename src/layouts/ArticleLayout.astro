@@ -29,7 +29,7 @@ const jsonLd = articleJsonLd({
 ---
 
 <BaseLayout title={metaTitle ?? title} description={description} ogType="article" ogImage={imagenPortada} jsonLd={jsonLd}>
-  <article>
+  <article class="pb-16 md:pb-20">
     <ArticleHeader categoria={categoria} titulo={title} fecha={fechaPublicacion} minutosLectura={minutosLectura} />
 
     {
