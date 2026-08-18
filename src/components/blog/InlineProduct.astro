@@ -1,12 +1,16 @@
 ---
-import type { Perfume } from '../../data/perfumes';
+import { getPerfumes } from '../../data/perfumes';
 import { optimizedProductImage } from '../../utils/images';
 
 interface Props {
-  perfume: Perfume;
+  slug: string;
 }
 
-const { perfume } = Astro.props;
+const { slug } = Astro.props;
+const perfumes = await getPerfumes();
+const perfume = perfumes.find((p) => p.slug === slug);
+if (!perfume) throw new Error(`InlineProduct: no existe el perfume "${slug}"`);
+
 const precio5 = perfume.tamanos.find((t) => t.ml === 5);
 const imagen = await optimizedProductImage(perfume.imagen, 128);
 ---

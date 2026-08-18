@@ -4,20 +4,22 @@ import Badge from '../../components/ui/Badge.astro';
 import TrustStrip from '../../components/ui/TrustStrip.astro';
 import ProductGrid from '../../components/product/ProductGrid.astro';
 import SizeSelector from '../../components/product/SizeSelector.astro';
-import { perfumes } from '../../data/perfumes';
+import { getPerfumes, type Perfume } from '../../data/perfumes';
 import { categoriaDeOcasion } from '../../data/categorias';
 import { buildProductTitle, buildProductDescription, productJsonLd, breadcrumbJsonLd } from '../../utils/seo';
 import { optimizedProductImage } from '../../utils/images';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const perfumes = await getPerfumes();
   return perfumes.map((perfume) => ({ params: { slug: perfume.slug }, props: { perfume } }));
 }
 
 interface Props {
-  perfume: (typeof perfumes)[number];
+  perfume: Perfume;
 }
 
 const { perfume } = Astro.props;
+const perfumes = await getPerfumes();
 const t5 = perfume.tamanos.find((t) => t.ml === 5)!;
 const t10 = perfume.tamanos.find((t) => t.ml === 10)!;
 

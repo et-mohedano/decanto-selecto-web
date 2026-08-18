@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import FilterBar from '../../components/product/FilterBar.astro';
 import ProductGrid from '../../components/product/ProductGrid.astro';
 import { linkConsulta } from '../../utils/whatsapp';
-import { perfumes } from '../../data/perfumes';
+import { getPerfumes } from '../../data/perfumes';
 import { categorias as categoriasBase, type CategoriaInfo } from '../../data/categorias';
 import { breadcrumbJsonLd } from '../../utils/seo';
 
@@ -50,6 +50,7 @@ interface Props {
 }
 
 const { categoria } = Astro.props;
+const perfumes = await getPerfumes();
 const perfumesFiltrados = perfumes.filter((p) => p.ocasiones.includes(categoria.ocasion));
 
 const jsonLd = breadcrumbJsonLd([
