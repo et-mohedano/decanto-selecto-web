@@ -71,7 +71,9 @@ src/
 
 ## Administrar perfumes y blog desde Pages CMS
 
-El catálogo (`src/content/perfumes/`) y el blog (`src/content/blog/`) se pueden editar sin tocar código desde [Pages CMS](https://pagescms.org), un CMS gratuito basado en Git que commitea directamente a GitHub. La configuración vive en `.pages.yml` en la raíz del repo. Ver la guía de instalación (GitHub App + login) que te dio Claude, o `pagescms.org/docs/guides/installing/github-app`.
+El catálogo (`src/content/perfumes/`) y el blog (`src/content/blog/`) se pueden editar sin tocar código desde [Pages CMS](https://pagescms.org), un CMS gratuito basado en Git que commitea directamente a GitHub. La configuración vive en `.pages.yml` en la raíz del repo.
+
+**Panel de edición: [app.pagescms.org/et-mohedano/decanto-selecto-web/main](https://app.pagescms.org/et-mohedano/decanto-selecto-web/main/)** (inicia sesión con tu cuenta de GitHub).
 
 Cada push (manual o desde el CMS) redepliega solo gracias a la integración Git de Cloudflare Workers.
 
