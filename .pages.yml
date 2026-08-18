@@ -1,0 +1,136 @@
+media:
+  - name: productos
+    label: Fotos de productos
+    input: src/assets/productos
+    output: /productos
+    categories: [image]
+  - name: blog
+    label: Portadas del blog
+    input: public/images/blog
+    output: /images/blog
+    categories: [image]
+
+content:
+  - name: blog
+    label: Blog
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    view:
+      primary: title
+      fields: [title, categoria, proximamente, fechaPublicacion]
+      sort: [fechaPublicacion, title]
+      search: [title, description, keyword]
+    fields:
+      - name: title
+        label: Título
+        type: string
+        required: true
+      - name: metaTitle
+        label: "Meta título (SEO, opcional)"
+        type: string
+      - name: description
+        label: Descripción (SEO)
+        type: text
+        required: true
+      - name: keyword
+        label: "Palabra clave (SEO)"
+        type: string
+        required: true
+      - name: categoria
+        label: Categoría
+        type: select
+        required: true
+        options:
+          values: ["Educación", "Guías por ocasión", "Fragancias y marcas", "Local"]
+      - name: fechaPublicacion
+        label: "Fecha de publicación"
+        type: date
+        required: true
+      - name: minutosLectura
+        label: "Minutos de lectura"
+        type: number
+        default: 6
+      - name: imagenPortada
+        label: "Imagen de portada"
+        type: image
+        options:
+          media: blog
+      - name: proximamente
+        label: "¿Programado (aún sin publicar)?"
+        description: "Si está activo, el artículo no aparece publicado en el sitio todavía."
+        type: boolean
+        default: false
+      - name: body
+        label: "Contenido del artículo (Markdown)"
+        type: text
+        required: true
+
+  - name: perfumes
+    label: Perfumes
+    type: collection
+    path: src/content/perfumes
+    format: yaml-frontmatter
+    filename:
+      template: "{fields.nombre}-{fields.concentracion}-{fields.marca}"
+    view:
+      primary: nombre
+      fields: [nombre, marca, concentracion, destacado]
+      sort: [nombre, marca]
+      search: [nombre, marca, descripcionCorta]
+    fields:
+      - name: nombre
+        label: Nombre
+        type: string
+        required: true
+      - name: marca
+        label: Marca
+        type: string
+        required: true
+      - name: concentracion
+        label: Concentración
+        type: select
+        required: true
+        options:
+          values: [EDT, EDP, Cologne, Parfum]
+      - name: descripcionCorta
+        label: "Descripción corta (una línea, aparece en tarjetas)"
+        type: string
+        required: true
+      - name: ocasiones
+        label: Ocasiones
+        type: select
+        required: true
+        options:
+          values: [oficina, citas, amigos, diario]
+          multiple: true
+      - name: clima
+        label: Clima recomendado
+        type: select
+        required: true
+        options:
+          values: [calurosos, frescos, cualquiera]
+      - name: tamanos
+        label: "Tamaños y precios"
+        type: object
+        list: true
+        fields:
+          - name: ml
+            label: "Mililitros (5 o 10)"
+            type: number
+          - name: precio
+            label: "Precio (MXN)"
+            type: number
+      - name: imagen
+        label: "Archivo de imagen"
+        description: "Nombre exacto del archivo ya subido en src/assets/productos/ (por ejemplo: dylan-blue-versace.png). Sube la foto nueva desde la sección de medios y copia aquí su nombre de archivo."
+        type: string
+        required: true
+      - name: destacado
+        label: "¿Destacado en la portada?"
+        type: boolean
+        default: false
+      - name: body
+        label: "Descripción larga (aparece en la página del producto)"
+        type: text
+        required: true

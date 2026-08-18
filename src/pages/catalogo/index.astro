@@ -4,8 +4,10 @@ import FilterBar from '../../components/product/FilterBar.astro';
 import ProductGrid from '../../components/product/ProductGrid.astro';
 import ScentTrail from '../../components/ui/ScentTrail.astro';
 import { linkConsulta } from '../../utils/whatsapp';
-import { perfumes } from '../../data/perfumes';
+import { getPerfumes } from '../../data/perfumes';
 import { breadcrumbJsonLd } from '../../utils/seo';
+
+const perfumes = await getPerfumes();
 
 const jsonLd = breadcrumbJsonLd([
   { name: 'Inicio', url: '/' },

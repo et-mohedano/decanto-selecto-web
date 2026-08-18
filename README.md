@@ -47,10 +47,11 @@ src/
 │   ├── blog/                 # ArticleCard, InlineProduct, ArticleHeader
 │   └── ui/                   # Button, Badge, TrustStrip, SectionHeading
 ├── content/
-│   └── blog/                 # Artículos del blog (.md / .mdx)
-├── content.config.ts        # Esquema de la colección "blog"
+│   ├── blog/                 # Artículos del blog (.md / .mdx)
+│   └── perfumes/              # Un archivo .md por perfume (catálogo completo)
+├── content.config.ts        # Esquema de las colecciones "blog" y "perfumes"
 ├── data/
-│   ├── perfumes.ts           # Catálogo completo tipado
+│   ├── perfumes.ts           # getPerfumes(): lee la colección "perfumes" y expone los tipos
 │   └── categorias.ts         # Las 4 categorías de ocasión (slug, título)
 ├── layouts/
 │   ├── BaseLayout.astro       # <head>, SEO, Header/Footer/WhatsAppFloat
@@ -68,20 +69,23 @@ src/
     └── images.ts              # Resolución de imágenes de producto vía astro:assets
 ```
 
-## Cómo agregar un perfume nuevo al catálogo
+## Administrar perfumes y blog desde Pages CMS
 
-1. Copia la foto del frasco a `src/assets/productos/` (cualquier formato: jpg, png, webp o avif — se optimiza a WebP automáticamente en el build). Nómbrala igual que el `slug` que le vas a dar al producto, por ejemplo `mi-perfume-marca.jpg`.
-2. Abre `src/data/perfumes.ts` y agrega un nuevo objeto al arreglo `perfumes`, siguiendo el mismo patrón que los demás:
-   - `slug`: `nombre-marca` en minúsculas, sin acentos, separado por guiones. Debe ser único.
-   - `descripcionCorta`: tres palabras, patrón "Fresco, especiado y elegante".
-   - `descripcionLarga`: entre 150 y 300 palabras **originales** (nunca copiadas de la marca). Estructura sugerida: cómo huele, cuándo usarlo, qué incluye el decant.
-   - `ocasiones` y `clima`: usa los mismos valores de tipo (`Ocasion`, `Clima`) definidos al inicio del archivo.
+El catálogo (`src/content/perfumes/`) y el blog (`src/content/blog/`) se pueden editar sin tocar código desde [Pages CMS](https://pagescms.org), un CMS gratuito basado en Git que commitea directamente a GitHub. La configuración vive en `.pages.yml` en la raíz del repo. Ver la guía de instalación (GitHub App + login) que te dio Claude, o `pagescms.org/docs/guides/installing/github-app`.
+
+Cada push (manual o desde el CMS) redepliega solo gracias a la integración Git de Cloudflare Workers.
+
+### Cómo agregar un perfume nuevo al catálogo (manualmente, sin el CMS)
+
+1. Copia la foto del frasco a `src/assets/productos/` (cualquier formato: jpg, png, webp o avif — se optimiza a WebP automáticamente en el build).
+2. Crea un archivo nuevo en `src/content/perfumes/<slug>.md`, con frontmatter siguiendo el esquema de `src/content.config.ts` (`nombre`, `marca`, `concentracion`, `descripcionCorta`, `ocasiones`, `clima`, `tamanos`, `imagen`, `destacado`) y el cuerpo del archivo (fuera del frontmatter) como `descripcionLarga`: entre 150 y 300 palabras **originales** (nunca copiadas de la marca). Estructura sugerida: cómo huele, cuándo usarlo, qué incluye el decant.
+   - El nombre del archivo (sin `.md`) es el `slug` de la página `/perfume/<slug>`. Usa `nombre-marca` en minúsculas, sin acentos, separado por guiones. Debe ser único.
    - `imagen`: el nombre exacto del archivo que copiaste en el paso 1.
    - `destacado`: `true` si quieres que aparezca en "Los más pedidos" del inicio.
-3. Si el producto no tiene foto todavía, usa `imagen: 'sin-foto.png'` (el marcador de posición ya incluido) y anota el pendiente en `PENDIENTES.md`.
+3. Si el producto no tiene foto todavía, usa `imagen: sin-foto.png` (el marcador de posición ya incluido) y anota el pendiente en `PENDIENTES.md`.
 4. Astro genera automáticamente la página `/perfume/[slug]`, la incluye en el catálogo y en las categorías donde corresponda por `ocasiones`. No hace falta tocar ninguna página.
 
-## Cómo agregar un artículo al blog
+### Cómo agregar un artículo al blog (manualmente, sin el CMS)
 
 1. Crea un archivo nuevo en `src/content/blog/`. Usa `.md` si el artículo no necesita insertar tarjetas de producto, o `.mdx` si sí (como `mejores-perfumes-para-la-oficina.mdx`, que usa el componente `InlineProduct`).
 2. El frontmatter debe cumplir el esquema de `src/content.config.ts`:
@@ -93,17 +97,15 @@ src/
    categoria: "Nombre de la categoría (se muestra como etiqueta)"
    fechaPublicacion: 2026-09-01
    minutosLectura: 7
+   imagenPortada: "/images/blog/mi-articulo.webp"
    proximamente: false
    ```
 3. Si el artículo todavía no está escrito pero ya quieres que aparezca en el calendario editorial, pon `proximamente: true` — aparecerá en `/blog` como tarjeta atenuada con la etiqueta "Próximamente" y sin enlace ni página propia.
 4. Para insertar un producto dentro del cuerpo (solo en `.mdx`):
    ```mdx
    import InlineProduct from '../../components/blog/InlineProduct.astro';
-   import { perfumes } from '../../data/perfumes';
 
-   export const miPerfume = perfumes.find((p) => p.slug === 'el-slug-del-perfume');
-
-   <InlineProduct perfume={miPerfume} />
+   <InlineProduct slug="el-slug-del-perfume" />
    ```
 5. Astro genera automáticamente `/blog/[slug]` para los artículos con `proximamente: false`.
 

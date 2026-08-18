@@ -9,9 +9,10 @@ import ProductGrid from '../components/product/ProductGrid.astro';
 import ArticleCard from '../components/blog/ArticleCard.astro';
 import ScentTrail from '../components/ui/ScentTrail.astro';
 import logo from '../assets/logo.png';
-import { perfumes } from '../data/perfumes';
+import { getPerfumes } from '../data/perfumes';
 import { localBusinessJsonLd } from '../utils/seo';
 
+const perfumes = await getPerfumes();
 const destacados = perfumes.filter((p) => p.destacado).slice(0, 6);
 
 const categorias = [
